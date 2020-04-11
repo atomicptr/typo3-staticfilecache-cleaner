@@ -12,12 +12,20 @@ var (
 )
 
 var rootCommand = &cobra.Command{
-	Use: "typo3-staticfilecache-cleaner",
-	Run: func(cmd *cobra.Command, paths []string) {
+	Use: "typo3-staticfilecache-cleaner [path...]",
+	Run: func(cmd *cobra.Command, args []string) {
+		paths := args
+
 		// no paths specified
 		if len(paths) == 0 {
-			log.Println("No paths specified.")
-			os.Exit(1)
+			// no path set, try env var...
+			cleanPathEnvVar := os.Getenv("CLEAN_PATH")
+			if cleanPathEnvVar == "" {
+				log.Println("No paths specified.")
+				os.Exit(1)
+			}
+
+			paths = []string{cleanPathEnvVar}
 		}
 
 		// check if all paths exist and are directories
