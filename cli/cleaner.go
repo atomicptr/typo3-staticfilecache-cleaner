@@ -1,3 +1,4 @@
+// Package cli implements a tool that removes expired staticfilecache entries
 package cli
 
 import (
@@ -36,7 +37,7 @@ func cleanPath(path string) int {
 	numDeletedFiles := 0
 
 	for _, filePath := range cacheEntryFiles {
-		data, err := ioutil.ReadFile(filePath)
+		data, err := ioutil.ReadFile(filepath.Clean(filePath))
 		if err != nil {
 			log.Printf(`error with file "%s": %s, ignoring file...`+"\n", filePath, err)
 			continue
@@ -144,16 +145,17 @@ func collectEmptyDirectoriesInPath(path string) []string {
 }
 
 func isEmptyDirectory(name string) bool {
-	f, err := os.Open(name)
+	f, err := os.Open(filepath.Clean(name))
 	if err != nil {
 		return false
 	}
-	defer f.Close()
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	_, err = f.Readdirnames(1)
-	if err == io.EOF {
-		return true
-	}
-
-	return false
+	return err == io.EOF
 }

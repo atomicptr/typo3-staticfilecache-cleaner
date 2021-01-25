@@ -1,3 +1,4 @@
+// Package staticfilecache cache entries for the TYPO3 extension staticfilecache
 package staticfilecache
 
 import (
@@ -32,6 +33,7 @@ func (c *CacheEntry) GetHeader(headerName string) string {
 	return strings.Join(headerValues, ",")
 }
 
+// IsExpired returns true when the cache entry is expired
 func (c *CacheEntry) IsExpired() bool {
 	expiresValue := c.GetHeader("Expires")
 

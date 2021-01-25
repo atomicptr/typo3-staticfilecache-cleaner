@@ -2,14 +2,16 @@ package cli
 
 import (
 	"fmt"
-	"github.com/atomicptr/typo3-staticfilecache-cleaner/staticfilecache"
-	copylib "github.com/otiai10/copy"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"testing"
+
+	copylib "github.com/otiai10/copy"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/atomicptr/typo3-staticfilecache-cleaner/staticfilecache"
 )
 
 const (
@@ -41,7 +43,7 @@ func TestIntegrationDeleteCacheEntry(t *testing.T) {
 
 	flagDryRun = true
 	for _, file := range files {
-		data, err := ioutil.ReadFile(file)
+		data, err := ioutil.ReadFile(filepath.Clean(file))
 		assert.Nil(t, err)
 
 		cacheEntry, err := staticfilecache.Parse(data)
@@ -69,7 +71,12 @@ func TestIntegrationCleanPath(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer os.RemoveAll(dir)
+	defer func() {
+		err := os.RemoveAll(dir)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	cwd, err := os.Getwd()
 	assert.NoError(t, err)

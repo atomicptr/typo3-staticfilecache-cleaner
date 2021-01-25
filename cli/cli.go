@@ -1,9 +1,10 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
 	"log"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -50,6 +51,7 @@ func init() {
 	rootCommand.PersistentFlags().BoolVar(&flagDryRun, "dry-run", false, "do not delete anything")
 }
 
+// Run executes the CLI
 func Run() error {
 	return rootCommand.Execute()
 }

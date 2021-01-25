@@ -1,8 +1,9 @@
 package staticfilecache
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseInvalid(t *testing.T) {
@@ -12,7 +13,7 @@ func TestParseInvalid(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-const expiredJsonString = `{
+const expiredJSONString = `{
 	"generated": "Sat, 11 Apr 2020 14:28:05 CEST",
 	"headers": {
 		"Single-Value-Header": [
@@ -29,12 +30,12 @@ const expiredJsonString = `{
 }`
 
 func TestParse(t *testing.T) {
-	_, err := Parse([]byte(expiredJsonString))
+	_, err := Parse([]byte(expiredJSONString))
 	assert.Nil(t, err)
 }
 
 func TestGetHeader(t *testing.T) {
-	cacheEntry, err := Parse([]byte(expiredJsonString))
+	cacheEntry, err := Parse([]byte(expiredJSONString))
 	assert.Nil(t, err)
 
 	// invalid header
@@ -47,12 +48,12 @@ func TestGetHeader(t *testing.T) {
 }
 
 func TestIsExpired(t *testing.T) {
-	cacheEntry, err := Parse([]byte(expiredJsonString))
+	cacheEntry, err := Parse([]byte(expiredJSONString))
 	assert.Nil(t, err)
 	assert.True(t, cacheEntry.IsExpired())
 }
 
-const notExpiredJsonString = `{
+const notExpiredJSONString = `{
 	"generated": "Sat, 11 Apr 2020 14:28:05 CEST",
 	"headers": {
 		"Expires": [
@@ -62,12 +63,12 @@ const notExpiredJsonString = `{
 }`
 
 func TestIsExpiredNotExpired(t *testing.T) {
-	cacheEntry, err := Parse([]byte(notExpiredJsonString))
+	cacheEntry, err := Parse([]byte(notExpiredJSONString))
 	assert.Nil(t, err)
 	assert.False(t, cacheEntry.IsExpired())
 }
 
-const invalidDateJsonString = `{
+const invalidDateJSONString = `{
 	"generated": "Sat, 11 Apr 2020 14:28:05 CEST",
 	"headers": {
 		"Expires": [
@@ -77,18 +78,18 @@ const invalidDateJsonString = `{
 }`
 
 func TestIsExpiredInvalidDateString(t *testing.T) {
-	cacheEntry, err := Parse([]byte(invalidDateJsonString))
+	cacheEntry, err := Parse([]byte(invalidDateJSONString))
 	assert.Nil(t, err)
 	assert.True(t, cacheEntry.IsExpired())
 }
 
-const noHeadersJsonString = `{
+const noHeadersJSONString = `{
 	"generated": "Sat, 11 Apr 2020 14:28:05 CEST",
 	"headers": {}
 }`
 
 func TestIsExpiredNoExpiresHeader(t *testing.T) {
-	cacheEntry, err := Parse([]byte(noHeadersJsonString))
+	cacheEntry, err := Parse([]byte(noHeadersJSONString))
 	assert.Nil(t, err)
 	assert.True(t, cacheEntry.IsExpired())
 }

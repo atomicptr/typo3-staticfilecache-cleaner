@@ -1,8 +1,8 @@
 language: go
 go:
-  - "1.14"
+  - "1.15"
 before_script:
-  - go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.35.2
 script:
   - go build
   - go test -v ./...
