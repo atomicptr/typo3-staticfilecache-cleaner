@@ -2,11 +2,10 @@ package cli
 
 import (
 	"github.com/atomicptr/typo3-staticfilecache-cleaner/staticfilecache"
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -15,7 +14,7 @@ const (
 )
 
 func TestIntegrationCollectCacheEntryFilesInPath(t *testing.T) {
-	const numCacheEntryFilesInTestData = 2
+	const numCacheEntryFilesInTestData = 3
 
 	files := collectCacheEntryFilesInPath(testDataBaseDir)
 	assert.Len(t, files, numCacheEntryFilesInTestData)
@@ -30,7 +29,7 @@ func TestIntegrationFindAdjacentFiles(t *testing.T) {
 }
 
 func TestIntegrationDeleteCacheEntry(t *testing.T) {
-	const numFilesDeleted = 3
+	const numFilesDeleted = 5
 
 	deleted := 0
 
@@ -53,7 +52,7 @@ func TestIntegrationDeleteCacheEntry(t *testing.T) {
 }
 
 func TestIntegrationCleanPath(t *testing.T) {
-	const numFilesDeleted = 3
+	const numFilesDeleted = 5
 
 	flagDryRun = true
 
