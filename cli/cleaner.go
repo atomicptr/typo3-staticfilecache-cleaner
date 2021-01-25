@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -49,6 +50,19 @@ func cleanPath(path string) int {
 
 		if cacheEntry.IsExpired() {
 			numDeletedFiles += deleteCacheEntry(filePath)
+		}
+	}
+
+	emptyDirectories := collectEmptyDirectoriesInPath(path)
+
+	for _, directoryPath := range emptyDirectories {
+		log.Printf(`deleting empty directory "%s"...`+"\n", directoryPath)
+
+		if !flagDryRun {
+			err := os.Remove(directoryPath)
+			if err != nil {
+				log.Printf(`error with directory "%s": %s`+"\n", directoryPath, err)
+			}
 		}
 	}
 
@@ -111,4 +125,35 @@ func findAdjacentFiles(path string) []string {
 	}
 
 	return files
+}
+
+func collectEmptyDirectoriesInPath(path string) []string {
+	var directories []string
+
+	err := filepath.Walk(path, func(path string, info os.FileInfo, _ error) error {
+		if info.IsDir() && isEmptyDirectory(path) {
+			directories = append(directories, path)
+		}
+		return nil
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return directories
+}
+
+func isEmptyDirectory(name string) bool {
+	f, err := os.Open(name)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+
+	_, err = f.Readdirnames(1)
+	if err == io.EOF {
+		return true
+	}
+
+	return false
 }
